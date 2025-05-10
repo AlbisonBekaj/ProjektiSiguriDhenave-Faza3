@@ -55,4 +55,8 @@ public class SceneManager {
     public static void clearCache() {
         sceneCache.clear();
     }
+
+    public static Scene getCurrentScene() {
+        return primaryStage.getScene();
+    }
 }
