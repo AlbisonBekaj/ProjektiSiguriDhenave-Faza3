@@ -18,4 +18,33 @@ public class SceneManager {
         scenePaths.put("signup", "/views/Create_user.fxml");
         scenePaths.put("dashboard", "/views/Hello.fxml");
     }
+
+    public static void setPrimaryStage(Stage stage) {
+        primaryStage = stage;
+    }
+
+    public static void loadScene(String sceneName) {
+        try {
+            if (sceneCache.containsKey(sceneName)) {
+                primaryStage.setScene(sceneCache.get(sceneName));
+                return;
+            }
+
+            String fxmlPath = scenePaths.get(sceneName);
+            if (fxmlPath == null) {
+                throw new IllegalArgumentException("Scene name not registered: " + sceneName);
+            }
+
+            FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource(fxmlPath));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+
+            sceneCache.put(sceneName, scene);
+
+            primaryStage.setScene(scene);
+        } catch (IOException e) {
+            System.err.println("Failed to load scene: " + sceneName);
+            e.printStackTrace();
+        }
+    }
 }
