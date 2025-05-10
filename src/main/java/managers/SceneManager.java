@@ -47,4 +47,8 @@ public class SceneManager {
             e.printStackTrace();
         }
     }
+
+    public static void addScene(String sceneName, String fxmlPath) {
+        scenePaths.put(sceneName, fxmlPath);
+    }
 }
