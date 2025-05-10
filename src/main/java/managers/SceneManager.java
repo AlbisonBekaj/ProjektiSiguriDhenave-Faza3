@@ -13,5 +13,9 @@ public class SceneManager {
     private static final Map<String, String> scenePaths = new HashMap<>();
     private static final Map<String, Scene> sceneCache = new HashMap<>();
 
-
+    static {
+        scenePaths.put("signin", "/views/Sign_in.fxml");
+        scenePaths.put("signup", "/views/Create_user.fxml");
+        scenePaths.put("dashboard", "/views/Hello.fxml");
+    }
 }
