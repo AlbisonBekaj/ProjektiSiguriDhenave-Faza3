@@ -51,4 +51,8 @@ public class SceneManager {
     public static void addScene(String sceneName, String fxmlPath) {
         scenePaths.put(sceneName, fxmlPath);
     }
+
+    public static void clearCache() {
+        sceneCache.clear();
+    }
 }
