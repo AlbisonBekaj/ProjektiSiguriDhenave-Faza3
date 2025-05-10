@@ -16,7 +16,7 @@ public class User {
         this.saltedHash = saltedHash;
     }
 
-    public User getInstance(ResultSet rs) throws SQLException {
+    public static User getInstance(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         String userName = rs.getString("userName");
         String salt = rs.getString("salt");
