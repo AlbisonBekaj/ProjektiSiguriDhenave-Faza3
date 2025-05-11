@@ -3,60 +3,58 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import utils.SceneLocator;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 public class SceneManager {
-    private static Stage primaryStage;
-    private static final Map<String, String> scenePaths = new HashMap<>();
-    private static final Map<String, Scene> sceneCache = new HashMap<>();
+    private static SceneManager sceneManager;
+    private Scene scene;
+    private String currentPath;
+    private Stack<String> history = new Stack<>();
 
-    static {
-        scenePaths.put("signin", "/views/Sign_in.fxml");
-        scenePaths.put("signup", "/views/Create_user.fxml");
-        scenePaths.put("dashboard", "/views/Hello.fxml");
+    private SceneManager(){
+        this.currentPath= SceneLocator.SING_IN;
+        this.scene=this.initScene();
     }
-
-    public static void setPrimaryStage(Stage stage) {
-        primaryStage = stage;
+    public static SceneManager getInstance(){
+        if(sceneManager==null){
+            sceneManager = new SceneManager();
+        }
+        return sceneManager;
     }
-
-    public static void loadScene(String sceneName) {
-        try {
-            if (sceneCache.containsKey(sceneName)) {
-                primaryStage.setScene(sceneCache.get(sceneName));
-                return;
-            }
-
-            String fxmlPath = scenePaths.get(sceneName);
-            if (fxmlPath == null) {
-                throw new IllegalArgumentException("Scene name not registered: " + sceneName);
-            }
-
-            FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource(fxmlPath));
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-
-            sceneCache.put(sceneName, scene);
-
-            primaryStage.setScene(scene);
-        } catch (IOException e) {
-            System.err.println("Failed to load scene: " + sceneName);
+    public Scene initScene(){
+        try{
+            return new Scene(this.getParent(currentPath));
+        }catch(Exception e){
             e.printStackTrace();
+            return null;
         }
     }
-
-    public static void addScene(String sceneName, String fxmlPath) {
-        scenePaths.put(sceneName, fxmlPath);
+    public static void load(String path)throws Exception{
+        if(sceneManager == null){
+            throw new Exception(" Scene manager nuk është 'null' !");
+        }
+        sceneManager.loadParent(path);
+    }
+    private void loadParent(String path) throws Exception{
+        if (currentPath != null && !currentPath.equals(path)) {
+            history.push(currentPath);
+        }
+        Parent parent =getParent(path);
+        this.currentPath =path;
+        scene.setRoot(parent);
+    }
+    private Parent getParent(String path) throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+        return loader.load();
+    }
+    public Scene getScene(){
+        return scene;
     }
 
-    public static void clearCache() {
-        sceneCache.clear();
-    }
 
-    public static Scene getCurrentScene() {
-        return primaryStage.getScene();
-    }
 }
