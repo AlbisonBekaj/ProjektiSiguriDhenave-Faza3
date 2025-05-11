@@ -11,7 +11,7 @@ import models.dto.CreateUserDto;
 import models.dto.UpdateUserDto;
 
 public class UserRepository extends BaseRepository<User, CreateUserDto, UpdateUserDto>{
-    UserRepository() {super("users");}
+   public UserRepository() {super("users");}
 
     public User fromResultSet(ResultSet result) throws SQLException {
         return User.getInstance(result);
