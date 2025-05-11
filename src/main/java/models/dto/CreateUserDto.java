@@ -1,10 +1,10 @@
 package models.dto;
 
-public class UseerCreatedto {
+public class CreateUserDto {
     private String username;
     private String password;
 
-    public UseerCreatedto(String username, String password) {
+    public CreateUserDto(String username, String password) {
         this.username = username;
         this.password = password;
     }
