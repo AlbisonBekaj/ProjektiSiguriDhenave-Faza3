@@ -20,7 +20,7 @@ public class User {
         int id = rs.getInt("id");
         String userName = rs.getString("userName");
         String salt = rs.getString("salt");
-        String saltedHash = rs.getString("saltedHash");
+        String saltedHash = rs.getString("salted_hash");
         return new User(id, userName, salt, saltedHash);
     }
 
