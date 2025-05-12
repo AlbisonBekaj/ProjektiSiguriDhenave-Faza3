@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class UserRepository extends BaseRepository<User, CreateUserDto, UpdateUserDto>{
-    UserRepository() {super("users")}
+    UserRepository() {super("users");}
 
     public User fromResultSet(ResultSet result) throws SQLException {
         return User.getInstance(result);
