@@ -1,5 +1,5 @@
 package service;
-import Repository.UserRepository;
+import repository.UserRepository;
 import models.User;
 import models.dto.CreateUserDto;
 
