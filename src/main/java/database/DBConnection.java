@@ -8,7 +8,7 @@ public class DBConnection {
     private static Connection connection = null;
     private static final String DB_URL = "jdbc:postgresql://localhost/DSfaza3";
     private static final String USER = "postgres";
-    private static final String PASSWORD = "1234";
+    private static final String PASSWORD = "Grupi14KNK";
 
     public static Connection getConnection() {
         if (DBConnection.connection == null) {
