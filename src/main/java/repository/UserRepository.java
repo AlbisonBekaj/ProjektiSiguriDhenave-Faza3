@@ -78,5 +78,23 @@ public class UserRepository extends BaseRepository<User, CreateUserDto, UpdateUs
         }
         return null;
     }
+    public User getUserByUsername(String username){
+       String query= """
+               SELECT * FROM users WHERE username = ?
+               """;
+        try{
+            PreparedStatement pstm = this.connection.prepareStatement(
+                    query, Statement.RETURN_GENERATED_KEYS);
+            pstm.setString(1,username);
+            pstm.execute();
+            ResultSet resultSet = pstm.getGeneratedKeys();
+            if(resultSet.next()){
+                return fromResultSet(resultSet);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

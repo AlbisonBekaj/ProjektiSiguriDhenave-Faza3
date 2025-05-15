@@ -18,7 +18,7 @@ public class User {
 
     public static User getInstance(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
-        String userName = rs.getString("userName");
+        String userName = rs.getString("username");
         String salt = rs.getString("salt");
         String saltedHash = rs.getString("salted_hash");
         return new User(id, userName, salt, saltedHash);
