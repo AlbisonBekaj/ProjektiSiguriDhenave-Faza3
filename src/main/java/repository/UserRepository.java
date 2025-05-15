@@ -83,13 +83,11 @@ public class UserRepository extends BaseRepository<User, CreateUserDto, UpdateUs
                SELECT * FROM users WHERE username = ?
                """;
         try{
-            PreparedStatement pstm = this.connection.prepareStatement(
-                    query, Statement.RETURN_GENERATED_KEYS);
-            pstm.setString(1,username);
-            pstm.execute();
-            ResultSet resultSet = pstm.getGeneratedKeys();
-            if(resultSet.next()){
-                return fromResultSet(resultSet);
+            PreparedStatement pstm = this.connection.prepareStatement(query);
+            pstm.setString(1, username);
+            ResultSet resultSet = pstm.executeQuery(); // Correct method for SELECT
+            if (resultSet.next()) {
+                return fromResultSet(resultSet); // Assuming this maps the row to a User object
             }
         }catch (SQLException e){
             e.printStackTrace();

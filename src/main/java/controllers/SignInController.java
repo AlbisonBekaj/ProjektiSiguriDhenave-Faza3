@@ -6,15 +6,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import managers.SceneManager;
-import models.User;
-import repository.UserRepository;
 import service.UserService;
 import utils.SceneLocator;
 
 public class SignInController {
     UserService userService=new UserService();
-    @FXML
-    private AnchorPane AnchorPaneSignIn;
 
     @FXML
     private TextField usernameField;
@@ -37,7 +33,7 @@ public class SignInController {
             if (signin > 0) {
                 SceneManager.load(SceneLocator.HELLO);
             } else {
-                new Alert(Alert.AlertType.INFORMATION, "Carefull Wrong information").showAndWait();
+                new Alert(Alert.AlertType.INFORMATION, "Carefull Wrong username or password").showAndWait();
             }
         }catch(Exception e){
             new Alert(Alert.AlertType.INFORMATION, "Carefull Wrong username or password").showAndWait();
