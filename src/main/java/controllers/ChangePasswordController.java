@@ -49,31 +49,31 @@ public class ChangePasswordController {
         User user = SessionManager.getCurrentUser();
 
         if (user == null) {
-            statusLabel.setText("Përdoruesi nuk është i loguar.");
+            statusLabel.setText("User is not logged!");
             return;
         }
 
         if (currentPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
-            statusLabel.setText("Të gjitha fushat janë të detyrueshme.");
+            statusLabel.setText("All fields are required!");
             return;
         }
 
         if (!newPassword.equals(confirmPassword)) {
-            statusLabel.setText("Fjalëkalimet e reja nuk përputhen.");
+            statusLabel.setText("New passwords do not match!");
             return;
         }
 
         String hashedInput = hashPassword(currentPassword, user.getSalt());
         if (!hashedInput.equals(user.getSaltedHash())) {
-            statusLabel.setText("Fjalëkalimi aktual është i gabuar.");
+            statusLabel.setText("Current password is incorrect!");
             return;
         }
 
         boolean success = userService.changePassword(user.getId(), newPassword);
         if (success) {
-            statusLabel.setText("Fjalëkalimi u ndryshua me sukses.");
+            statusLabel.setText("Password was changed successfully.");
         } else {
-            statusLabel.setText("Gabim gjatë ndryshimit të fjalëkalimit.");
+            statusLabel.setText("Error while changing password!");
         }
     }
 
@@ -108,7 +108,7 @@ public class ChangePasswordController {
         changePasswordButton.setDisable(!(allFieldsFilled && passwordsMatch));
 
         if (!confirmPassword.isEmpty() && !newPassword.equals(confirmPassword)) {
-            statusLabel.setText("Fjalëkalimet nuk përputhen.");
+            statusLabel.setText("Passwords do not match!");
         } else {
             statusLabel.setText("");
         }
