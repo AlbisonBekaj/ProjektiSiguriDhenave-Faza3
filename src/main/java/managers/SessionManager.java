@@ -1,4 +1,4 @@
-package session;
+package managers;
 
 import models.User;
 
@@ -13,7 +13,11 @@ public class SessionManager {
         return currentUser;
     }
 
-    public static void clear() {
+    public static boolean isLoggedIn() {
+        return currentUser != null;
+    }
+
+    public static void logout() {
         currentUser = null;
     }
 }
