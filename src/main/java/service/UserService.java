@@ -1,4 +1,5 @@
 package service;
+import managers.SessionManager;
 import repository.UserRepository;
 import models.User;
 import models.dto.CreateUserDto;
@@ -22,6 +23,7 @@ public class UserService {
             String salt = user.getSalt();
             String hashedInput = hashPassword(password, salt);
             if(user.getSaltedHash().equals(hashedInput)) {
+                SessionManager.setCurrentUser(user);
                 return user.getId();
             }
             return 0;
