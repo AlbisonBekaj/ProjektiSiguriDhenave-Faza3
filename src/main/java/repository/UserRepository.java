@@ -139,4 +139,19 @@ public class UserRepository{
         return null;
     }
 
+    public boolean updatePassword(int userId, String salt, String saltedHash) {
+        String query = "UPDATE users SET salt = ?, salted_hash = ? WHERE id = ?";
+        try {
+            PreparedStatement pstm = this.connection.prepareStatement(query);
+            pstm.setString(1, salt);
+            pstm.setString(2, saltedHash);
+            pstm.setInt(3, userId);
+            int updated = pstm.executeUpdate();
+            return updated == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

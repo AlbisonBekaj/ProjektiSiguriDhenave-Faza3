@@ -11,4 +11,12 @@ public class HelloController {
             e.printStackTrace();
         }
     }
+
+    public void handleChangePasswordClick() {
+        try {
+            SceneManager.load("views/Change_password.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

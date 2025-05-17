@@ -54,4 +54,19 @@ public class UserService {
         }
     }
 
+    public boolean changePassword(int userId, String newPassword) {
+        try {
+            byte[] saltBytes = new byte[16];
+            new java.security.SecureRandom().nextBytes(saltBytes);
+            String salt = java.util.Base64.getEncoder().encodeToString(saltBytes);
+
+            String saltedHash = hashPassword(newPassword, salt);
+
+            return userRepository.updatePassword(userId, salt, saltedHash);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
