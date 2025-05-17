@@ -83,45 +83,6 @@ public class UserRepository{
         }
         return null;
     }
-
-    public User update(UpdateUserDto userDto){
-        StringBuilder query = new StringBuilder("UPDATE USERS SET ");
-        ArrayList<Object> params = new ArrayList<>();
-
-        if(userDto.getUserName() != null){
-            query.append("USERNAME = ?, ");
-            params.add(userDto.getUserName());
-        }
-        if(userDto.getSalt() != null){
-            query.append("SALT = ?, ");
-            params.add(userDto.getSalt());
-        }
-        if(userDto.getSaltedHash() != null){
-            query.append("SALTED_HASH = ?, ");
-            params.add(userDto.getSaltedHash());
-        }
-        if(params.isEmpty()){
-            return getById(userDto.getId());
-        }
-
-        query.setLength(query.length() - 2);
-        query.append(" WHERE ID = ?");
-        params.add(userDto.getId());
-
-        try{
-            PreparedStatement pstm = this.connection.prepareStatement(query.toString());
-            for(int i = 0; i < params.size(); i++){
-                pstm.setObject(i + 1, params.get(i));
-            }
-            int updated = pstm.executeUpdate();
-            if(updated == 1) {
-                return this.getById(userDto.getId());
-            }
-        }catch(SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
     public User getUserByUsername(String username){
        String query= """
                SELECT * FROM users WHERE username = ?
