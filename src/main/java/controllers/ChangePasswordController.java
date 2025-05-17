@@ -1,63 +1,117 @@
 package controllers;
 
-import database.DBConnection;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import managers.SessionManager;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import managers.SceneManager;
 import models.User;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import service.UserService;
+import utils.SceneLocator;
+import managers.SessionManager;
 
 public class ChangePasswordController {
 
     @FXML
-    private PasswordField oldPasswordField, newPasswordField, confirmPasswordField;
+    private PasswordField currentPasswordField;
+
+    @FXML
+    private PasswordField newPasswordField;
+
+    @FXML
+    private PasswordField confirmPasswordField;
+
+    @FXML
+    private Button changePasswordButton;
 
     @FXML
     private Label statusLabel;
 
-    @FXML
-    private void handleChangePassword() {
-        String oldPass = oldPasswordField.getText();
-        String newPass = newPasswordField.getText();
-        String confirmPass = confirmPasswordField.getText();
+    private final UserService userService = new UserService();
 
-        if (!newPass.equals(confirmPass)) {
-            statusLabel.setText("Fjalëkalimet e reja nuk përputhen!");
-            return;
-        }
+    @FXML
+    public void initialize() {
+        statusLabel.setText("");
+        changePasswordButton.setDisable(true);
+
+        currentPasswordField.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
+        newPasswordField.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
+        confirmPasswordField.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
+    }
+
+
+    @FXML
+    private void handleChangePasswordClick() {
+        String currentPassword = currentPasswordField.getText();
+        String newPassword = newPasswordField.getText();
+        String confirmPassword = confirmPasswordField.getText();
 
         User user = SessionManager.getCurrentUser();
+
         if (user == null) {
-            statusLabel.setText("Nuk jeni i kyçur.");
+            statusLabel.setText("Përdoruesi nuk është i loguar.");
             return;
         }
 
-        try (Connection conn = DBConnection.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT password FROM users WHERE id = ?");
-            stmt.setInt(1, user.getId());
-            ResultSet rs = stmt.executeQuery();
+        if (currentPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
+            statusLabel.setText("Të gjitha fushat janë të detyrueshme.");
+            return;
+        }
 
-            if (rs.next()) {
-                String currentHashedPassword = rs.getString("password");
+        if (!newPassword.equals(confirmPassword)) {
+            statusLabel.setText("Fjalëkalimet e reja nuk përputhen.");
+            return;
+        }
 
-                if (!oldPass.equals(currentHashedPassword)) {
-                    statusLabel.setText("Fjalëkalimi aktual është i gabuar.");
-                    return;
-                }
+        String hashedInput = hashPassword(currentPassword, user.getSalt());
+        if (!hashedInput.equals(user.getSaltedHash())) {
+            statusLabel.setText("Fjalëkalimi aktual është i gabuar.");
+            return;
+        }
 
-                PreparedStatement updateStmt = conn.prepareStatement("UPDATE users SET password = ? WHERE id = ?");
-                updateStmt.setString(1, newPass);
-                updateStmt.setInt(2, user.getId());
-                updateStmt.executeUpdate();
-
-                statusLabel.setText("Fjalëkalimi u ndryshua me sukses.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        boolean success = userService.changePassword(user.getId(), newPassword);
+        if (success) {
+            statusLabel.setText("Fjalëkalimi u ndryshua me sukses.");
+        } else {
             statusLabel.setText("Gabim gjatë ndryshimit të fjalëkalimit.");
         }
     }
+
+    private String hashPassword(String password, String salt) {
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
+            md.update(java.util.Base64.getDecoder().decode(salt));
+            byte[] hashedPassword = md.digest(password.getBytes());
+            return java.util.Base64.getEncoder().encodeToString(hashedPassword);
+        } catch (Exception e) {
+            throw new RuntimeException("Hashing error", e);
+        }
+    }
+
+    @FXML
+    private void handleBackClick() {
+        try {
+            SceneManager.load(SceneLocator.HELLO);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void validateForm() {
+        String currentPassword = currentPasswordField.getText();
+        String newPassword = newPasswordField.getText();
+        String confirmPassword = confirmPasswordField.getText();
+
+        boolean allFieldsFilled = !currentPassword.isEmpty() && !newPassword.isEmpty() && !confirmPassword.isEmpty();
+        boolean passwordsMatch = newPassword.equals(confirmPassword);
+
+        changePasswordButton.setDisable(!(allFieldsFilled && passwordsMatch));
+
+        if (!confirmPassword.isEmpty() && !newPassword.equals(confirmPassword)) {
+            statusLabel.setText("Fjalëkalimet nuk përputhen.");
+        } else {
+            statusLabel.setText("");
+        }
+    }
+
 }
