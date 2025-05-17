@@ -16,7 +16,6 @@ public class UserService {
             throw new Exception("EMPTY !! username or password ");
         }
         User user = userRepository.getUserByUsername(username);
-        System.out.println(user.getUserName());
         if (user == null) {
             throw new Exception("WRONG !! username or password ");
         }
