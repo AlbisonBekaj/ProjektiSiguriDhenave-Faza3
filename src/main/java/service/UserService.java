@@ -54,4 +54,14 @@ public class UserService {
         }
     }
 
+    public boolean updatePassword(String username, String currentPassword, String newPassword) {
+        UserRepository repo = new UserRepository();
+        User user = repo.findByUsername(username);
+        if (user == null || !user.getPassword().equals(currentPassword)) {
+            return false;
+        }
+        return repo.updatePassword(username, newPassword);
+    }
+
+
 }
