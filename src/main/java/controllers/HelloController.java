@@ -14,7 +14,7 @@ public class HelloController {
 
     public void handleChangePasswordClick() {
         try {
-            SceneManager.load("views/Change_password.fxml");
+            SceneManager.load("/views/Change_password.fxml");
         } catch (Exception e) {
             e.printStackTrace();
         }
