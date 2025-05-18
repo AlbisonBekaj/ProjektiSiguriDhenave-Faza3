@@ -34,33 +34,6 @@ public class UserRepository{
         }
         return null;
     }
-    public ArrayList<User> getAll(){
-        ArrayList<User> users = new ArrayList<>();
-        String query = "SELECT * FROM USERS";
-        try{
-            Statement stm = this.connection.createStatement();
-            ResultSet res = stm.executeQuery(query);
-            while(res.next()){
-                users.add(this.fromResultSet(res));
-            }
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-        return users;
-    }
-    public boolean delete(int id){
-        String query = "DELETE FROM USERS WHERE ID = ?";
-        try{
-            PreparedStatement pstm =
-                    this.connection.prepareStatement(query);
-            pstm.setInt(1, id);
-            return pstm.executeUpdate() == 1;
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public User create(CreateUserDto userDto){
         String query ="""
                 INSERT INTO USERS(username, salt, salted_hash)
