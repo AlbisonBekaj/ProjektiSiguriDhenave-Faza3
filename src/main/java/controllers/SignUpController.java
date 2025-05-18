@@ -28,7 +28,7 @@ public class SignUpController {
             String userName = usernameFieldSignUp.getText();
             String password = passwordFieldSignUp.getText();
             User signUp = userService.signUp(userName, password);
-            new Alert(Alert.AlertType.INFORMATION, "New user was CREATED !!").showAndWait();
+            new Alert(Alert.AlertType.INFORMATION, "Successfully created a new user. !!").showAndWait();
         }catch(UserService.ExceptionAlreadyExists e){
             new Alert(Alert.AlertType.INFORMATION, "Carefull ,this username already exits!!").showAndWait();
             e.printStackTrace();
