@@ -15,6 +15,7 @@
                   <Font size="36.0" />
                </font>
             </Text>
+            <Button fx:id="changePasswordBtn" onAction="#handleChangePasswordClick" text="Change Password" />
             <Button fx:id="SignOut" onAction="#handleSignOutClick" alignment="CENTER" mnemonicParsing="false" text="Sign out" />
          </children>
       </VBox>

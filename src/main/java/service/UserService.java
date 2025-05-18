@@ -1,4 +1,5 @@
 package service;
+import managers.SessionManager;
 import repository.UserRepository;
 import models.User;
 import models.dto.CreateUserDto;
@@ -22,6 +23,7 @@ public class UserService {
             String salt = user.getSalt();
             String hashedInput = hashPassword(password, salt);
             if(user.getSaltedHash().equals(hashedInput)) {
+                SessionManager.setCurrentUser(user);
                 return user.getId();
             }
             return 0;
@@ -54,14 +56,19 @@ public class UserService {
         }
     }
 
-    public boolean updatePassword(String username, String currentPassword, String newPassword) {
-        UserRepository repo = new UserRepository();
-        User user = repo.findByUsername(username);
-        if (user == null || !user.getPassword().equals(currentPassword)) {
+    public boolean changePassword(int userId, String newPassword) {
+        try {
+            byte[] saltBytes = new byte[16];
+            new java.security.SecureRandom().nextBytes(saltBytes);
+            String salt = java.util.Base64.getEncoder().encodeToString(saltBytes);
+
+            String saltedHash = hashPassword(newPassword, salt);
+
+            return userRepository.updatePassword(userId, salt, saltedHash);
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
-        return repo.updatePassword(username, newPassword);
     }
-
 
 }

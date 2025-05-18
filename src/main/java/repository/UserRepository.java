@@ -8,11 +8,57 @@ import java.util.ArrayList;
 import models.dto.CreateUserDto;
 import models.dto.UpdateUserDto;
 
-public class UserRepository extends BaseRepository<User, CreateUserDto, UpdateUserDto>{
-   public UserRepository() {super("users");}
+public class UserRepository{
+    private final Connection connection;
+
+    public UserRepository() {
+        this.connection= DBConnection.getConnection();
+    }
+
 
     public User fromResultSet(ResultSet result) throws SQLException {
         return User.getInstance(result);
+    }
+    public User getById(int id){
+        String query = "SELECT * FROM  USERS WHERE ID = ?";
+        try{
+            PreparedStatement pstm = this.connection.prepareStatement(
+                    query);
+            pstm.setInt(1, id);
+            ResultSet res = pstm.executeQuery();
+            if(res.next()){
+                return this.fromResultSet(res);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public ArrayList<User> getAll(){
+        ArrayList<User> users = new ArrayList<>();
+        String query = "SELECT * FROM USERS";
+        try{
+            Statement stm = this.connection.createStatement();
+            ResultSet res = stm.executeQuery(query);
+            while(res.next()){
+                users.add(this.fromResultSet(res));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return users;
+    }
+    public boolean delete(int id){
+        String query = "DELETE FROM USERS WHERE ID = ?";
+        try{
+            PreparedStatement pstm =
+                    this.connection.prepareStatement(query);
+            pstm.setInt(1, id);
+            return pstm.executeUpdate() == 1;
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public User create(CreateUserDto userDto){
@@ -83,9 +129,9 @@ public class UserRepository extends BaseRepository<User, CreateUserDto, UpdateUs
         try{
             PreparedStatement pstm = this.connection.prepareStatement(query);
             pstm.setString(1, username);
-            ResultSet resultSet = pstm.executeQuery(); // Correct method for SELECT
+            ResultSet resultSet = pstm.executeQuery();
             if (resultSet.next()) {
-                return fromResultSet(resultSet); // Assuming this maps the row to a User object
+                return fromResultSet(resultSet);
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -93,37 +139,19 @@ public class UserRepository extends BaseRepository<User, CreateUserDto, UpdateUs
         return null;
     }
 
-    public User findByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE username = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, username);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new User(
-                        rs.getInt("id"),
-                        rs.getString("username"),
-                        rs.getString("salt"),
-                        rs.getString("salted_hash")
-                ); }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public boolean updatePassword(String username, String newPassword) {
-        String sql = "UPDATE users SET password = ? WHERE username = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, newPassword);
-            stmt.setString(2, username);
-            return stmt.executeUpdate() == 1;
+    public boolean updatePassword(int userId, String salt, String saltedHash) {
+        String query = "UPDATE users SET salt = ?, salted_hash = ? WHERE id = ?";
+        try {
+            PreparedStatement pstm = this.connection.prepareStatement(query);
+            pstm.setString(1, salt);
+            pstm.setString(2, saltedHash);
+            pstm.setInt(3, userId);
+            int updated = pstm.executeUpdate();
+            return updated == 1;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-
 
 }

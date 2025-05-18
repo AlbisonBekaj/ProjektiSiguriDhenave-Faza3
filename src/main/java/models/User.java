@@ -56,5 +56,8 @@ public class User {
         this.saltedHash = saltedHash;
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 12add47428a835b0913bd4c7c7b670a19b40492b
 }
