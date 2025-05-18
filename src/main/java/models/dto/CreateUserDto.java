@@ -37,7 +37,7 @@ public class CreateUserDto {
     }
 
     public String getUserName() { return userName; }
-    public String getPassword() { return password; }
+    public String getPassword () { return password; }
     public String getSalt() { return salt; }
     public String getSaltedHash() { return saltedHash; }
 

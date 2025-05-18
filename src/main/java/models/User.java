@@ -55,4 +55,6 @@ public class User {
     public void setSaltedHash(String slatedHash) {
         this.saltedHash = saltedHash;
     }
+
+
 }
